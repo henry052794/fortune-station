@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今天的命運補給站</title>
+<style>
+:root{--ink:#25243a;--pink:#ff7fa8;--yellow:#ffd86b;--purple:#8c7cf0;--cream:#fffaf0}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;color:var(--ink);background:linear-gradient(135deg,#fff4e8,#f1edff);min-height:100vh}
+header{text-align:center;padding:38px 18px 18px}header .tag{display:inline-block;background:#fff;border:1px solid #eee2ff;border-radius:99px;padding:7px 14px;font-size:.85rem}
+h1{font-size:clamp(2rem,6vw,3.5rem);margin:16px 0 8px;letter-spacing:.02em}header p{margin:0;color:#68657b}
+main{max-width:980px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+.card{background:rgba(255,255,255,.86);border:1px solid #fff;border-radius:26px;padding:25px;box-shadow:0 16px 40px #44336c12}
+.wheel{width:min(100%,330px);aspect-ratio:1;margin:10px auto 22px;border-radius:50%;background:conic-gradient(#ff9db9 0 45deg,#ffd86b 45deg 90deg,#a69af7 90deg 135deg,#9de2cf 135deg 180deg,#ffb58c 180deg 225deg,#c8b5ff 225deg 270deg,#ffda8e 270deg 315deg,#a8d8ff 315deg);border:10px solid white;box-shadow:0 8px 25px #25243a18;display:grid;place-items:center;position:relative}
+.wheel:after{content:"✦";font-size:4.5rem;color:#fff;text-shadow:0 2px 8px #54447b55}
+button{border:0;border-radius:15px;padding:13px 20px;background:var(--ink);color:white;font-weight:750;font-size:1rem;cursor:pointer;transition:transform .15s,opacity .15s}
+button:hover{transform:translateY(-2px)}button:active{transform:scale(.98)}button.secondary{background:#f0edff;color:#51458f}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.result{margin-top:20px;background:#fff8dc;border:1px dashed #e6c85c;border-radius:18px;padding:18px;text-align:center;min-height:112px}
+.result .emoji{font-size:2rem}.result h2{margin:6px 0;font-size:1.25rem}.result p{margin:0;color:#6e6344}
+h2.section{font-size:1.25rem;margin:0 0 12px}.steps{padding-left:1.2rem;line-height:1.85}.steps li{margin-bottom:8px}.tip{background:#f3f0ff;padding:13px 15px;border-radius:14px;margin-top:15px;font-size:.92rem}
+footer{text-align:center;padding:20px;color:#77728a;font-size:.85rem}
+@media(max-width:720px){main{grid-template-columns:1fr}header{padding-top:28px}.card{padding:20px}}
+</style>
+</head>
+<body>
+<header>
+  <span class="tag">✨ 一點好運，現在補給</span>
+  <h1>今天的命運補給站</h1>
+  <p>心情卡關、選擇困難？抽一張今日靈感卡，讓好運給你一點提示。</p>
+</header>
+<main>
+  <section class="card">
+    <h2 class="section">🔮 抽出你的今日提示</h2>
+    <div class="wheel" aria-label="彩色命運轉盤"></div>
+    <div class="actions">
+      <button id="draw">抽一張靈感卡</button>
+      <button class="secondary" id="reset">重新開始</button>
+    </div>
+    <div class="result" id="result" aria-live="polite">
+      <div class="emoji">🌟</div><h2>準備好接收今天的訊息了嗎？</h2><p>按下按鈕，看看今天的專屬提示。</p>
+    </div>
+  </section>
+  <aside class="card">
+    <h2 class="section">📖 網站怎麼使用？</h2>
+    <ol class="steps">
+      <li>先深呼吸，想一個今天想得到答案的小問題。</li>
+      <li>點擊「抽一張靈感卡」。</li>
+      <li>閱讀抽到的提示，挑一個小行動實踐。</li>
+      <li>想再抽一次，就按「重新開始」或繼續抽卡。</li>
+    </ol>
+    <div class="tip"><strong>小提醒：</strong>這是一個娛樂與自我反思小工具。卡片內容不是預言，真正的選擇仍然在你手上！</div>
+    <h2 class="section" style="margin-top:24px">💡 今日任務</h2>
+    <p>做一件能讓未來的自己感謝你的事——哪怕只是喝水、整理桌面，或主動傳訊息給朋友。</p>
+  </aside>
+</main>
+<footer>Made with ✨ · 今天也值得一點好運</footer>
+<script>
+const cards=[
+ {e:"🌱",t:"慢慢來，也是在前進",p:"不用一次完成所有事。先把眼前的一小步走好。"},
+ {e:"💬",t:"主動，就是新的開始",p:"今天試著主動問候一個人，可能會有意想不到的收穫。"},
+ {e:"🎯",t:"把注意力放回自己",p:"少一點比較，多一點專注。你的節奏也很好。"},
+ {e:"🍀",t:"給自己一個小冒險",p:"試試平常不會選的路、食物或活動，讓生活有新鮮感。"},
+ {e:"☀️",t:"你比想像中更有能力",p:"回想一件你曾經克服的事，帶著那份信心繼續。"},
+ {e:"🫶",t:"休息不是浪費時間",p:"如果累了，就好好休息。照顧自己也是重要任務。"},
+ {e:"📚",t:"今天適合學一點新東西",p:"花十分鐘探索一個好奇的主題，累積會慢慢發光。"},
+ {e:"✨",t:"好事可能藏在小地方",p:"留意今天一個微小但值得感謝的瞬間。"}
+];
+const result=document.getElementById("result");
+document.getElementById("draw").addEventListener("click",()=>{
+ const c=cards[Math.floor(Math.random()*cards.length)];
+ result.innerHTML=`<div class="emoji">${c.e}</div><h2>${c.t}</h2><p>${c.p}</p>`;
+});
+document.getElementById("reset").addEventListener("click",()=>{
+ result.innerHTML='<div class="emoji">🌟</div><h2>準備好接收今天的訊息了嗎？</h2><p>按下按鈕，看看今天的專屬提示。</p>';
+});
+</script>
+</body>
+</html>

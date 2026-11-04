@@ -11,10 +11,12 @@ header{text-align:center;padding:38px 18px 18px}header .tag{display:inline-block
 h1{font-size:clamp(2rem,6vw,3.5rem);margin:16px 0 8px;letter-spacing:.02em}header p{margin:0;color:#68657b}
 main{max-width:980px;margin:0 auto;padding:18px;display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
 .card{background:rgba(255,255,255,.86);border:1px solid #fff;border-radius:26px;padding:25px;box-shadow:0 16px 40px #44336c12}
-.wheel{width:min(100%,330px);aspect-ratio:1;margin:10px auto 22px;border-radius:50%;background:conic-gradient(#ff9db9 0 45deg,#ffd86b 45deg 90deg,#a69af7 90deg 135deg,#9de2cf 135deg 180deg,#ffb58c 180deg 225deg,#c8b5ff 225deg 270deg,#ffda8e 270deg 315deg,#a8d8ff 315deg);border:10px solid white;box-shadow:0 8px 25px #25243a18;display:grid;place-items:center;position:relative}
+.wheel{width:min(100%,330px);aspect-ratio:1;margin:10px auto 22px;border-radius:50%;background:conic-gradient(#ff9db9 0 45deg,#ffd86b 45deg 90deg,#a69af7 90deg 135deg,#9de2cf 135deg 180deg,#ffb58c 180deg 225deg,#c8b5ff 225deg 270deg,#ffda8e 270deg 315deg,#a8d8ff 315deg);border:10px solid white;box-shadow:0 8px 25px #25243a18;display:grid;place-items:center;position:relative;transition:transform 4.8s cubic-bezier(.12,.72,.12,1);will-change:transform}
 .wheel:after{content:"✦";font-size:4.5rem;color:#fff;text-shadow:0 2px 8px #54447b55}
 button{border:0;border-radius:15px;padding:13px 20px;background:var(--ink);color:white;font-weight:750;font-size:1rem;cursor:pointer;transition:transform .15s,opacity .15s}
 button:hover{transform:translateY(-2px)}button:active{transform:scale(.98)}button.secondary{background:#f0edff;color:#51458f}
+.pointer{width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:29px solid #25243a;margin:0 auto -15px;position:relative;z-index:2}
+button:disabled{opacity:.55;cursor:wait;transform:none}
 .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
 .result{margin-top:20px;background:#fff8dc;border:1px dashed #e6c85c;border-radius:18px;padding:18px;text-align:center;min-height:112px}
 .result .emoji{font-size:2rem}.result h2{margin:6px 0;font-size:1.25rem}.result p{margin:0;color:#6e6344}
@@ -32,7 +34,7 @@ footer{text-align:center;padding:20px;color:#77728a;font-size:.85rem}
 <main>
   <section class="card">
     <h2 class="section">🔮 抽出你的今日提示</h2>
-    <div class="wheel" aria-label="彩色命運轉盤"></div>
+    <div class="pointer" aria-hidden="true"></div><div class="wheel" id="wheel" aria-label="彩色命運轉盤"></div>
     <div class="actions">
       <button id="draw">抽一張靈感卡</button>
       <button class="secondary" id="reset">重新開始</button>
@@ -67,11 +69,27 @@ const cards=[
  {e:"✨",t:"好事可能藏在小地方",p:"留意今天一個微小但值得感謝的瞬間。"}
 ];
 const result=document.getElementById("result");
-document.getElementById("draw").addEventListener("click",()=>{
- const c=cards[Math.floor(Math.random()*cards.length)];
- result.innerHTML=`<div class="emoji">${c.e}</div><h2>${c.t}</h2><p>${c.p}</p>`;
+const wheel=document.getElementById("wheel");
+const drawButton=document.getElementById("draw");
+let rotation=0, spinning=false;
+drawButton.addEventListener("click",()=>{
+ if(spinning) return;
+ spinning=true; drawButton.disabled=true;
+ const chosen=Math.floor(Math.random()*cards.length);
+ const segment=360/cards.length;
+ const stopAt=360-(chosen*segment+segment/2);
+ rotation += 360*5 + ((stopAt-(rotation%360)+360)%360);
+ result.innerHTML='<div class="emoji">🎡</div><h2>命運轉動中……</h2><p>看看今天會抽到什麼提示！</p>';
+ wheel.addEventListener("transitionend",function finished(){
+   wheel.removeEventListener("transitionend",finished);
+   const c=cards[chosen];
+   result.innerHTML=`<div class="emoji">${c.e}</div><h2>${c.t}</h2><p>${c.p}</p>`;
+   spinning=false; drawButton.disabled=false;
+ });
+ wheel.style.transform=`rotate(${rotation}deg)`;
 });
 document.getElementById("reset").addEventListener("click",()=>{
+ if(spinning) return;
  result.innerHTML='<div class="emoji">🌟</div><h2>準備好接收今天的訊息了嗎？</h2><p>按下按鈕，看看今天的專屬提示。</p>';
 });
 </script>
